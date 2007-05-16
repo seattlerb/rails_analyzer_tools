@@ -1,0 +1,12 @@
+#!/usr/local/bin/ruby -w
+
+require 'io_tail'
+require 'analyzer_tools/rails_stat'
+
+if ARGV.length < 1 then
+  $stderr.puts "Usage: #{$0} RAILS_LOG [...] [PRINT_INTERVAL]"
+  exit 1
+end
+
+RailsStat.start(*ARGV)
+

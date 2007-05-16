@@ -1,0 +1,53 @@
+#!/usr/local/bin/ruby -w
+
+Thread.abort_on_exception = true
+
+require 'optparse'
+require 'analyzer_tools/bench'
+
+OptionParser.accept URI do |u,|
+  begin
+    URI.parse u if u
+  rescue ArgumentError
+    raise OptionParser::InvalidArgument, u
+  end
+end
+
+uri = nil
+requests = 1
+concurrency = 1
+
+opts = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$PROGRAM_NAME} [options]"
+  opts.separator ""
+
+  opts.on("-u", "--url URL", URI, "URL to access") do |val|
+    uri = val
+  end
+
+  opts.on("-r", "--requests REQUESTS", Integer, "Requests to send") do |val|
+    requests = val
+  end
+
+  opts.separator ""
+
+  opts.on("-c", "--concurrency THREADS", Integer,
+          "Concurrent requests to make") do |val|
+            concurrency = val
+          end
+
+end
+
+opts.parse!
+
+if uri.nil? or requests.nil? then
+  puts opts
+  exit
+end
+
+bench = Bench.new uri, requests, concurrency
+times = bench.run
+
+puts "Total time: #{times.inject(0) { |a,t| a + t }}"
+puts "Average time: #{times.inject(0) { |a,t| a + t } / times.length}"
+

@@ -1,0 +1,12 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/bench
+bin/crawl
+bin/rails_stat
+lib/analyzer_tools.rb
+lib/analyzer_tools/bench.rb
+lib/analyzer_tools/crawl.rb
+lib/analyzer_tools/rails_stat.rb
+lib/io_tail.rb

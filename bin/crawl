@@ -1,0 +1,57 @@
+#!/usr/local/bin/ruby -w
+
+Thread.abort_on_exception = true
+
+require 'optparse'
+require 'analyzer_tools/crawl'
+
+OptionParser.accept URI do |u,|
+  begin
+    URI.parse u if u
+  rescue ArgumentError
+    raise OptionParser::InvalidArgument, u
+  end
+end
+
+start_url = nil
+concurrency = 1
+
+opts = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$PROGRAM_NAME} -u URL [-c CONCURRENCY]"
+  opts.separator ""
+
+  opts.on("-u", "--url URL", URI, "starting URL") do |val|
+    start_url = val
+    start_url.path = '/' if start_url.path.empty?
+  end
+
+  opts.separator ""
+
+  opts.on("-c", "--concurrency THREADS", Integer,
+          "Concurrent requests to make") do |val|
+    concurrency = val
+  end
+
+end
+
+opts.parse!
+
+if start_url.nil? then
+  STDERR.puts opts
+  exit 1
+end
+
+crawler = Crawler.new start_url, concurrency
+
+trap 'INT' do
+  crawler.stop
+  times = crawler.times
+  puts
+  puts "Total time: #{times.inject(0) { |a,t| a + t }}"
+  puts "Requests: #{times.length}"
+  puts "Average time: #{times.inject(0) { |a,t| a + t } / times.length}"
+  exit
+end
+
+crawler.run
+
