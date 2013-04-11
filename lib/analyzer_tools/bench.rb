@@ -13,7 +13,7 @@ class Bench
   # Creates a new Bench instance that will +requests+ fetches of +uri+ using
   # +thread+ concurrent threads.
 
-  def initialize(uri, requests, threads = 1)
+  def initialize(uri, requests, threads = 1, cookies = nil)
     raise ArgumentError, "Thread count must be more than 0" if threads < 1
     @uri = uri
     @total_requests = requests
@@ -21,6 +21,7 @@ class Bench
     @hundredths = @total_requests > 100 ? @total_requests / 100 : 1
     @num_requests = requests
     @threads = threads
+    @cookies = cookies
   end
 
   ##
@@ -67,6 +68,7 @@ class Bench
     s.puts "GET #{@uri.request_uri} HTTP/1.0\r\n"
     s.puts "Host: #{@uri.host}\r\n"
     s.puts "User-Agent: RubyBench\r\n"
+    s.puts "Cookie: #{@cookies}\r\n" if @cookies
     s.puts "\r\n"
     s.flush
     response = s.read
