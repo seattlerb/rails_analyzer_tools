@@ -16,6 +16,7 @@ end
 uri = nil
 requests = 1
 concurrency = 1
+ignore_count = 0
 cookies = nil
 
 opts = OptionParser.new do |opts|
@@ -42,6 +43,11 @@ opts = OptionParser.new do |opts|
             cookies = val
           end
 
+  opts.on("-i", "--ignore N",
+          "Number of initial fetch requests to exclude from the final stats. Useful if you know that the first request will be uncached.") do |val|
+            ignore_count = val.to_i
+          end
+
 end
 
 opts.parse!
@@ -54,6 +60,6 @@ end
 bench = Bench.new uri, requests, concurrency, cookies
 times = bench.run
 
-puts "Total time: #{times.inject(0) { |a,t| a + t }}"
-puts "Average time: #{times.inject(0) { |a,t| a + t } / times.length}"
+puts "Total time: #{times[ignore_count..-1].inject(0) { |a,t| a + t }}"
+puts "Average time: #{times[ignore_count..-1].inject(0) { |a,t| a + t } / (times.length - ignore_count)}"
 
