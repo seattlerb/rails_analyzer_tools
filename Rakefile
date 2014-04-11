@@ -2,7 +2,6 @@ require 'hoe'
 require './lib/analyzer_tools'
 
 Hoe.new 'rails_analyzer_tools', AnalyzerTools::VERSION do |p|
-  p.rubyforge_name = 'seattlerb'
   p.author = 'Eric Hodel'
   p.email = 'drbrain@segment7.net'
   p.summary = p.paragraphs_of('README.txt', 1).join ' '
