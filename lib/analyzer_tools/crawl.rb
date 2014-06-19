@@ -22,12 +22,13 @@ class Crawler
   # Creates a new Crawler that will start at +start_url+ and run +threads+
   # concurrent threads.
 
-  def initialize(start_url, threads = 1)
+  def initialize(start_url, threads = 1, cookies = nil)
     raise ArgumentError, "Thread count must be more than 0" if threads < 1
     @start_url = start_url
     @thread_count = threads
     @threads = ThreadGroup.new
     @times = []
+    @cookies = cookies
   end
 
   ##
@@ -66,6 +67,7 @@ class Crawler
     req << "GET #{url.request_uri} HTTP/1.0"
     req << "Host: #{url.host}"
     req << "User-Agent: RubyCrawl"
+    req << "Cookie: #{@cookies}" if @cookies
     req << ""
     req << ""
     req = req.join "\r\n"
